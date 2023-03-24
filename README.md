@@ -11,7 +11,7 @@ Welcome to the ultimate 2D GTA experience! Get ready to drive cars 🚗, shoot N
 
 ## License 🔖
 
-This game is released under the MIT License. See LICENSE file for more information.
+This game is released under the MIT License. See [LICENSE](LICENSE) file for more information.
 
 ## Acknowledgments 🙏
 
