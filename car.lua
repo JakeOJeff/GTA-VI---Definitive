@@ -78,9 +78,7 @@ function car:update(dt,bullets)
         if b.x > self.x and b.x < self.x + self.body:getWidth() and b.y > self.y and b.y < self.y + self.body:getHeight() then
             if char.x > self.x and char.x < self.x + self.body:getWidth() and not allenteredCar() then
                 return
-            elseif self.destroyed == true then
-                return
-            elseif allenteredCar() then
+            elseif self.destroyed == true or allenteredCar() then
                 return
             else
                 self.destroyed = true
@@ -140,6 +138,7 @@ function car:draw2()
     if self.prompt.visible == true then
 
         love.graphics.setColor(0,0,0)
+        -- TEMPORARY OUTLINING
         love.graphics.print(self.prompt.text,self.prompt.x,self.prompt.y + 0.7)
         love.graphics.print(self.prompt.text,self.prompt.x,self.prompt.y - 0.7)
         love.graphics.print(self.prompt.text,self.prompt.x+ 0.7,self.prompt.y)
@@ -150,6 +149,7 @@ function car:draw2()
     end
     if self.warning.visible == true then
         love.graphics.setColor(0,0,0)
+        -- TEMPORARY OUTLINING
         love.graphics.print(self.warning.text,self.warning.x,self.warning.y + 0.7)
         love.graphics.print(self.warning.text,self.warning.x,self.warning.y - 0.7)
         love.graphics.print(self.warning.text,self.warning.x+ 0.7,self.warning.y)
@@ -320,5 +320,5 @@ end
 function moveWheelsL(dt) -- Move wheel left
     for i, v in pairs(cars) do
         v:wheelBackward(dt)
-	end 
+    end 
 end
