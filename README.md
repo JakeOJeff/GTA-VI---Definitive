@@ -17,4 +17,8 @@ This game is released under the MIT License. See [LICENSE](LICENSE) file for mor
 
 ## Acknowledgments 🙏
 
-Thanks to EngineerSmith for supporting me in making this.
+Thanks to **EngineerSmith** for supporting me in making this.
+
+External Libraries : ZAM Lib
+
+Made with [LÖVE](https://love2d.org/)
