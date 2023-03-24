@@ -2,6 +2,7 @@
     -- GTA VI : Definitive FANMADE | JakeOJeff#0001 Licensed
     -- ================================================================
     local game = {}
+    local menu = require('menu')
 
     function game.init()
         -- Importing libraries
@@ -54,9 +55,7 @@
         charBlood:setLinearAcceleration(-150, char.y + body:getHeight(), 50, bodyY)
         charBlood:setSpeed(32)
     
-        music = love.audio.newSource( 'music/theroad.mp3', 'stream' )
-        music:setLooping( true ) --so it doesnt stop
-        music:play()
+
     end
     
     function game.update(dt)
@@ -196,6 +195,10 @@
            if bcgprompt == true then -- Chats if (temporary) npc BCG is there
               bcgpromptenabled = true
            end
+        elseif key == "escape" then
+            myButt.code()
+            menu.init(true)
+
         end
     end
     
