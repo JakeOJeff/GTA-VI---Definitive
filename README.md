@@ -9,7 +9,7 @@ Welcome to the ultimate 2D GTA experience! Get ready to drive cars 🚗, shoot N
 - Right click to aim and left click to shoot
 - Use 'F' to enter a car and 'E' to talk to NPCs
 
-## License(LICENSE) 🔖
+## [LICENSE]License 🔖
 
 This game is released under the MIT License. See [LICENSE](LICENSE) file for more information.
 
