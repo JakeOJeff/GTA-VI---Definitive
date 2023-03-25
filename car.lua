@@ -5,16 +5,21 @@ img = love.graphics.newImage("world/smoke.png")
 
 -- =====================================================
 -- LOADING CAR
-function car:initialize(body,wheel,destructed,x,y, wheel1x,wheel1y,wheel2x,wheel2y)
+function car:initialize(body,wheel,destructed,x,y, wheel1x,wheel1y,wheel2x,wheel2y, acceleration, maxSpeed)
     self.body = body or love.graphics.newImage("cars/car-full.png")
     self.wheel = wheel or love.graphics.newImage("cars/wheel.png")
     self.destructed = destructed or love.graphics.newImage("cars/car-destroyed.png")
     self.x = x or 200
     self.y = y or love.graphics.getHeight()
-    self.wheel1x = wheel1x or self.x + 35
-    self.wheel2x = wheel2x or self.x + 163
-    self.wheel1y = wheel1y or self.y + 56
-    self.wheel2y = wheel2y or self.y + 56
+    self.w1x = wheel1x or 35
+    self.w2x = wheel2x or 163
+    
+    self.w1y = wheel1y or 56
+    self.w2y = wheel2y or 56
+    self.wheel1x = self.x + self.w1x 
+    self.wheel2x = self.x + self.w2x 
+    self.wheel1y = self.y + self.w1y 
+    self.wheel2y = self.y + self.w2y 
     self.destroyed = false
     self.enteredCar = false
     self.exploding = false
@@ -23,6 +28,8 @@ function car:initialize(body,wheel,destructed,x,y, wheel1x,wheel1y,wheel2x,wheel
     self.smoke:setLinearAcceleration(-25, 0, 5, -100)
     self.smoke:setSpeed(-32)
 
+    self.acceleration = acceleration or 5
+    self.maxSpeed = maxSpeed or 200
     -- Add a self.smokeX and self.smokeY
     -- WHY? well because the smoke currently follows the player, prevent that!
     self.prompt = {
@@ -58,10 +65,10 @@ end
 -- ======================================================================
 -- Update Car
 function car:update(dt,bullets)
-    self.wheel1x = self.x + 35
-    self.wheel2x = self.x + 163
-    self.wheel1y = self.y + 56
-    self.wheel2y = self.y + 56
+    self.wheel1x = self.x + self.w1x 
+    self.wheel2x = self.x + self.w2x 
+    self.wheel1y = self.y + self.w1y 
+    self.wheel2y = self.y + self.w2y 
     self.smoke:update(dt)
     -- Updating prompt
     self.warning.x = self.x
@@ -78,7 +85,9 @@ function car:update(dt,bullets)
         if b.x > self.x and b.x < self.x + self.body:getWidth() and b.y > self.y and b.y < self.y + self.body:getHeight() then
             if char.x > self.x and char.x < self.x + self.body:getWidth() and not allenteredCar() then
                 return
-            elseif self.destroyed == true or allenteredCar() then
+            elseif self.destroyed == true then
+                return
+            elseif allenteredCar() then
                 return
             else
                 self.destroyed = true
@@ -138,7 +147,6 @@ function car:draw2()
     if self.prompt.visible == true then
 
         love.graphics.setColor(0,0,0)
-        -- TEMPORARY OUTLINING
         love.graphics.print(self.prompt.text,self.prompt.x,self.prompt.y + 0.7)
         love.graphics.print(self.prompt.text,self.prompt.x,self.prompt.y - 0.7)
         love.graphics.print(self.prompt.text,self.prompt.x+ 0.7,self.prompt.y)
@@ -149,7 +157,6 @@ function car:draw2()
     end
     if self.warning.visible == true then
         love.graphics.setColor(0,0,0)
-        -- TEMPORARY OUTLINING
         love.graphics.print(self.warning.text,self.warning.x,self.warning.y + 0.7)
         love.graphics.print(self.warning.text,self.warning.x,self.warning.y - 0.7)
         love.graphics.print(self.warning.text,self.warning.x+ 0.7,self.warning.y)
@@ -201,7 +208,39 @@ function car:wheelBackward(dt)
     end
 end
 
+function car:accelerate(dt)
+    self:wheelForward(dt) -- Moving car wheels ( If in car ) [ RIGHT ]
+    if char.speed < self.maxSpeed then
+    if char.speed < ((75/100) * self.maxSpeed) then
+        char.speed = char.speed + self.acceleration * 4 * dt
+    else
+        char.speed = char.speed + self.acceleration * dt
+    end
+    end
+end
 
+function car:retard(dt)
+    self:wheelBackward(dt) -- Moving car wheels ( If in car ) [ LEFT ]
+    if char.speed > 1 then
+        char.speed = char.speed - (self.acceleration * 10) * dt
+    else
+        char.speed = char.speed - (self.acceleration/2) * dt
+    end
+end
+
+function car:autoretard(dt)
+    if self.enteredCar  then
+        if char.speed > 1 then
+            self:wheelForward(dt)
+            char.speed = char.speed - self.acceleration * dt
+        elseif char.speed < -1 then
+            self:wheelBackward(dt)
+            char.speed = char.speed + self.acceleration * dt
+        else
+            char.speed = 0
+        end
+    end
+end
 -- Enter car function
 function car:enter()
     if self.enteredCar == false then
@@ -241,8 +280,8 @@ function car:emitSmoke()
 end
 
 
-function car:distance()
-    return math.vdist(char.x,char.y,self.x,self.y)
+function car:distanceTo(obj)
+    return math.vdist(obj.x,obj.y,self.x,self.y)
 end
 
 function car:isDestroyed()
@@ -285,25 +324,46 @@ function dCars3() -- Draw cars (3rd Installment)
 	end 
 end
 function allenteredCar() -- Combined checking function ( See if entered Car )
-	for i, v in pairs(cars) do
-        return v:entered() 
-	end 
+    for i, v in pairs(cars) do
+        if v:entered() then
+            return true
+        end
+    end 
+    return false -- Return false if no cars have been entered
 end
 
 function allisDestroyed() -- Check if all cars are destroyed
-	for i, v in pairs(cars) do
-        return v:isDestroyed()
-	end 
+    for i, v in pairs(cars) do
+        if not v:isDestroyed() then
+            return false -- Return false if at least one car is not destroyed
+        end
+    end 
+    return true -- Return true if all cars are destroyed
 end
 
-function enterCorrespondingCar() -- Enter nearest car
-	for i, v in pairs(cars) do
-        if v:distance() < 100 then
-            v:enter()
-         end
-	end 
-end
 
+function enterCorrespondingCar()
+    local playerPos = char -- Assume this function returns the player's position
+    local nearestCar = nil
+    local nearestDist = math.huge
+    for i, v in pairs(cars) do
+        local dist = v:distanceTo(playerPos)
+        if dist < 100 then
+            if v:entered() then
+                v:enter()
+                return
+            elseif not v:entered() and not allenteredCar() then
+                if dist < nearestDist then
+                    nearestCar = v
+                    nearestDist = dist
+                end
+            end
+        end
+    end
+    if nearestCar then
+        nearestCar:enter()
+    end
+end
 function fixCorrespondingCar() -- Enter nearest car
 	for i, v in pairs(cars) do
         if v:distance() < 100 then
@@ -320,5 +380,20 @@ end
 function moveWheelsL(dt) -- Move wheel left
     for i, v in pairs(cars) do
         v:wheelBackward(dt)
-    end 
+	end 
+end
+function accelerate(dt) -- Move wheel left
+    for i, v in pairs(cars) do
+        v:accelerate(dt)
+	end 
+end
+function retard(dt) -- Move wheel left
+    for i, v in pairs(cars) do
+        v:retard(dt)
+	end 
+end
+function autoretard(dt) -- Move wheel left
+    for i, v in pairs(cars) do
+        v:autoretard(dt)
+	end 
 end
