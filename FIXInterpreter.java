@@ -1,3 +1,6 @@
+// This is to interpret Storyline.fix , This is not related to the game directly and just to extract the storyline
+
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -5,7 +8,6 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class interpreter {
-
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter the filename to interpret: ");
