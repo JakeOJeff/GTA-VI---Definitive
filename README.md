@@ -1,6 +1,6 @@
 # GTA VI Definitive ( Beta Release )
 
-###Welcome to the ultimate CRIMINAL LIFE! 
+### Welcome to the ultimate CRIMINAL LIFE! 
 -Drive cars 🚗, Shoot NPCs 👥, and Blow up ENEMIES💥. 
 -With an EPIC soundtrack 🎧, Immersive atmosphere 🌃, and a Plotty Storyline, this game will keep you on the edge of your seat.
 
